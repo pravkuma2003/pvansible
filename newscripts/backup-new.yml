@@ -1,0 +1,32 @@
+-
+    name: 'Backup show run (enable mode commands)'
+    hosts: all
+    gather_facts: false
+    connection: local
+    vars:
+        date: '{{ lookup(''pipe'', ''date +%Y%m%d-%H%M'') }}'
+    tasks:
+        -
+            name: 'run enable level commands'
+            ios_command: {authorize: yes, commands: ['show run', 'show ip int brief', 'show ip ospf nei', 'show ip bgp', 'show bgp summary', 'show ip arp']}
+            register: print_output
+        -
+            debug: var=print_output.stdout_lines
+        -
+            name: 'save output to a file'
+            copy: 'content="{{ print_output.stdout[0] }}" dest="./output/{{ inventory_hostname }}-{{date}}-shrun.txt"'
+        -
+            name: 'save Inventory to a file'
+            copy: 'content="{{ print_output.stdout[1] }}" dest="./output/{{ inventory_hostname }}-{{date}}-inv.txt"'
+        -
+            name: 'save OSPF  to a file'
+            copy: 'content="{{ print_output.stdout[2] }}" dest="./output/{{ inventory_hostname }}-{{date}}-ospf.txt"'
+        -
+            name: 'save BGP to a file'
+            copy: 'content="{{ print_output.stdout[3] }}" dest="./output/{{ inventory_hostname }}-{{date}}-bgp.txt"'
+        -
+            name: 'save bgp-summary to a file'
+            copy: 'content="{{ print_output.stdout[4] }}" dest="./output/{{ inventory_hostname }}-{{date}}-bgpsummary.txt"'
+        -
+            name: 'save arp to a file'
+            copy: 'content="{{ print_output.stdout[5] }}" dest="./output/{{ inventory_hostname }}-{{date}}-arp.txt"'
