@@ -1,0 +1,11 @@
+[routers]
+Jp-ASR1K-INT1-GTT
+Jp-ASR1K-INT2-Cogent
+Jp-ASR1K-DMVPN1
+Jp-ASR1K-MPLS-GTT
+Jp-ASR1K-MPLS-L3
+Jp-N7K-DCI
+Jp-N7K-OTV
+
+[switches]
+Jp-C3850-oob-sw
