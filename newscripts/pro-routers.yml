@@ -1,0 +1,47 @@
+-
+    name: 'Backup show run (enable mode commands)'
+    hosts: routers
+    gather_facts: false
+    connection: local
+    vars:
+        date: '{{ lookup(''pipe'', ''date +%Y%m%d-%H%M'') }}'
+    tasks:
+        -
+            name: 'run enable level commands'
+            ios_command: {username: admin, password: 'C!sco!@#', authorize: yes, auth_pass: 'C!sco!@#', timeout: 30,commands: ['show run', 'show ip route summary', 'show ip ospf neighbor', 'show ip ospf database', 'show ip arp', 'show ip interface brief']}
+            register: print_output
+        -
+            debug: var=print_output.stdout_lines
+        -
+            name: 'save shrun to a file'
+            copy: 'content="{{ print_output.stdout[0] }}" dest="./output/{{ inventory_hostname }}-{{date}}-shrun.txt"'
+        -
+            name: 'save route-summ to a file'
+            copy: 'content="{{ print_output.stdout[1] }}" dest="./output/{{ inventory_hostname }}-{{date}}-routesummary.txt"'
+        -
+            name: 'save OSPF-nei  to a file'
+            copy: 'content="{{ print_output.stdout[2] }}" dest="./output/{{ inventory_hostname }}-{{date}}-ospfnei.txt"'
+        -
+            name: 'save ospf-db to a file'
+            copy: 'content="{{ print_output.stdout[3] }}" dest="./output/{{ inventory_hostname }}-{{date}}-ospfdatabase.txt"'
+        -
+            name: 'save arp to a file'
+            copy: 'content="{{ print_output.stdout[4] }}" dest="./output/{{ inventory_hostname }}-{{date}}-arp.txt"'
+        -
+            name: 'save int-brief to a file'
+            copy: 'content="{{ print_output.stdout[5] }}" dest="./output/{{ inventory_hostname }}-{{date}}-intbrief.txt"'
+        -
+            name: 'run bgp commands on remote nodes'
+            ios_command: {username: admin, password: 'C!sco!@#', authorize: yes, auth_pass: 'C!sco!@#', timeout: 30,commands: ['show ip bgp neighbor','show ip bgp summary','show ip protocols']}
+            register: print_output1
+        -
+            debug: var=print_output1.stdout_lines
+        -
+            name: 'save bgpnei to a file'
+            copy: 'content="{{ print_output1.stdout[0] }}" dest="./output/{{ inventory_hostname }}-{{date}}-shbgpnei.txt"'
+        -
+            name: 'save bgp-summary to a file'
+            copy: 'content="{{ print_output1.stdout[1] }}" dest="./output/{{ inventory_hostname }}-{{date}}-shbgpsummary.txt"'
+        -
+            name: 'save protocols  to a file'
+            copy: 'content="{{ print_output1.stdout[2] }}" dest="./output/{{ inventory_hostname }}-{{date}}-showprotocols.txt"'
